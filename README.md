@@ -16,7 +16,7 @@ Responsible for keeping track of the latest gameId (and optionally the mapId and
 - err (string)[OPTIONAL]: When an unexpected error occured (fe. database not accessable), this field contains the error message. This will never be added if success=true
 
 ###/players/{uuid}/lastserver/ [GET]:
-####Gets the latest gameId (and optionally the mapId and flavorId) the player has played on 
+####Gets the latest gameId (and if set the mapId and flavorId) the player has played on 
 
 **Arguments**:
 - uuid (string): The unique id of the player
