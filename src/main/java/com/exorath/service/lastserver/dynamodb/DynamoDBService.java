@@ -32,8 +32,8 @@ import com.amazonaws.services.dynamodbv2.model.ResourceInUseException;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
 import com.exorath.service.lastserver.Service;
-import com.exorath.service.lastserver.res.LastServer;
-import com.exorath.service.lastserver.res.Result;
+import com.exorath.service.lastserver.res.GetResult;
+import com.exorath.service.lastserver.res.PutResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,12 +74,12 @@ public class DynamoDBService implements Service {
 
 
 	@Override
-	public LastServer getLastServer(UUID playerId) {
+	public GetResult getLastServer(UUID playerId) {
 		GetItemSpec spec = new GetItemSpec().withPrimaryKey(PRIM_KEY, playerId.toString());
 		Item item = table.getItem(spec);
 		logger.info("Retrieved the following last server data for player " + playerId + ": " + item);
 		if (item == null || !item.hasAttribute(GAMEID_ATTR)) {
-			return new LastServer(null, null, null);
+			return new GetResult(null, null, null);
 		} else {
 			String gameId = null;
 			String mapId = null;
@@ -93,12 +93,12 @@ public class DynamoDBService implements Service {
 			if (item.hasAttribute(FLAVORID_ATTR)) {
 				flavorId = item.getString(FLAVORID_ATTR);
 			}
-			return new LastServer(gameId, mapId, flavorId);
+			return new GetResult(gameId, mapId, flavorId);
 		}
 	}
 
 	@Override
-	public Result setLastServer(UUID playerId, String gameId, String mapId, String flavorId) {
+	public PutResult setLastServer(UUID playerId, String gameId, String mapId, String flavorId) {
 		UpdateItemSpec spec = new UpdateItemSpec()
 				.withPrimaryKey(PRIM_KEY, playerId.toString())
 				.withAttributeUpdate(new AttributeUpdate(GAMEID_ATTR).put(gameId))
@@ -107,10 +107,10 @@ public class DynamoDBService implements Service {
 		try {
 			UpdateItemOutcome outcome = table.updateItem(spec);
 			logger.info("Successfully set last server data for player " + playerId + ": gameId(" + gameId + ") mapId(" + mapId + ") flavorId(" + flavorId + ")");
-			return new Result(true);
+			return new PutResult(true);
 		} catch (ConditionalCheckFailedException ex) {
 			logger.warn("Failed to set last server data for player" + playerId + ": gameId(" + gameId + ") mapId(" + mapId + ") flavorId(" + flavorId + ")\n:" + ex.getMessage());
-			return new Result(false);
+			return new PutResult(false);
 		}
 	}
 }
