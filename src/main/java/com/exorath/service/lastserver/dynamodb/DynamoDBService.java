@@ -107,10 +107,10 @@ public class DynamoDBService implements Service {
 		try {
 			UpdateItemOutcome outcome = table.updateItem(spec);
 			logger.info("Successfully set last server data for player " + playerId + ": gameId(" + gameId + ") mapId(" + mapId + ") flavorId(" + flavorId + ")");
-			return new PutResult(true);
+			return new PutResult();
 		} catch (ConditionalCheckFailedException ex) {
 			logger.warn("Failed to set last server data for player" + playerId + ": gameId(" + gameId + ") mapId(" + mapId + ") flavorId(" + flavorId + ")\n:" + ex.getMessage());
-			return new PutResult(false);
+			return new PutResult(ex.getMessage());
 		}
 	}
 }
