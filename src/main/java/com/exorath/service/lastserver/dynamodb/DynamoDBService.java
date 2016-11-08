@@ -99,11 +99,15 @@ public class DynamoDBService implements Service {
 
 	@Override
 	public PutResult setLastServer(UUID playerId, String gameId, String mapId, String flavorId) {
+		if (gameId == null) {
+			return new PutResult("gameId can't be null.");
+		}
 		UpdateItemSpec spec = new UpdateItemSpec()
 				.withPrimaryKey(PRIM_KEY, playerId.toString())
-				.withAttributeUpdate(new AttributeUpdate(GAMEID_ATTR).put(gameId))
-				.withAttributeUpdate(new AttributeUpdate(MAPID_ATTR).put(mapId))
-				.withAttributeUpdate(new AttributeUpdate(FLAVORID_ATTR).put(flavorId));
+				.withAttributeUpdate(
+						new AttributeUpdate(GAMEID_ATTR).put(gameId),
+						new AttributeUpdate(MAPID_ATTR).put(mapId),
+						new AttributeUpdate(FLAVORID_ATTR).put(flavorId));
 		try {
 			UpdateItemOutcome outcome = table.updateItem(spec);
 			logger.info("Successfully set last server data for player " + playerId + ": gameId(" + gameId + ") mapId(" + mapId + ") flavorId(" + flavorId + ")");
