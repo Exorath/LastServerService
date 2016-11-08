@@ -19,23 +19,45 @@ package com.exorath.service.lastserver.res;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Wraps the success status of a put operation.
+ * Wraps the success status of a put request.
  */
-public class Result {
+public class PutResult {
 	@SerializedName("success")
 	private boolean success;
 
+	@SerializedName("err")
+	private String err;
+
 	/**
-	 * @param success Whether or not this {@code Result} represents a success.
+	 * Creates a new {@code PutResult} representing a success.
 	 */
-	public Result(boolean success) {
-		this.success = success;
+	public PutResult() {
+		this.success = true;
+		this.err = null;
 	}
 
 	/**
-	 * @return true if the put operation was a success, false otherwise.
+	 * Creates a new {@code PutResult} representing a failure.
+	 *
+	 * @param err The error associated with the put request this result represents.
+	 */
+	public PutResult(String err) {
+		this.success = false;
+		this.err = err;
+	}
+
+	/**
+	 * @return true if the request was a success, false otherwise.
 	 */
 	public boolean isSuccess() {
 		return success;
+	}
+
+	/**
+	 * @return The error message associated with the put request this result represents. This will only be set if {@code
+	 * isSuccess} returns false.
+	 */
+	public String getError() {
+		return err;
 	}
 }

@@ -29,16 +29,12 @@ import static spark.Spark.put;
 public class Transport {
 	private static final String PLAYER_ID = "playerId";
 	private static final String GAME_ID = "gameId";
-	private static final String MAP_ID = "mapId";
-	private static final String FLAVOR_ID = "flavorId";
 	private static final Gson Gson = new Gson();
 
 	public static void setup(Service srv, PortProvider provider) {
 		port(provider.getPort());
 		get("/players/:" + PLAYER_ID + "/lastserver/", Transport.getGetLastServerRoute(srv), Gson::toJson);
 		put("/players/:" + PLAYER_ID + "/lastserver/:" + GAME_ID, Transport.getSetLastServerGameIdOnlyRoute(srv), Gson::toJson);
-		put("/players/:" + PLAYER_ID + "/lastserver/:" + GAME_ID + "/:" + MAP_ID, Transport.getSetLastServerWithMapIdRoute(srv), Gson::toJson);
-		put("/players/:" + PLAYER_ID + "/lastserver/:" + GAME_ID + "/:" + MAP_ID + "/:" + FLAVOR_ID, Transport.getSetLastServerWithMapAndFlavorIdRoute(srv), Gson::toJson);
 	}
 
 	public static Route getGetLastServerRoute(Service srv) {
@@ -46,14 +42,6 @@ public class Transport {
 	}
 
 	public static Route getSetLastServerGameIdOnlyRoute(Service srv) {
-		return (req, res) -> srv.setLastServer(UUID.fromString(req.params(PLAYER_ID)), req.params(GAME_ID), null, null);
-	}
-
-	public static Route getSetLastServerWithMapIdRoute(Service srv) {
-		return (req, res) -> srv.setLastServer(UUID.fromString(req.params(PLAYER_ID)), req.params(GAME_ID), req.params(MAP_ID), null);
-	}
-
-	public static Route getSetLastServerWithMapAndFlavorIdRoute(Service srv) {
-		return (req, res) -> srv.setLastServer(UUID.fromString(req.params(PLAYER_ID)), req.params(GAME_ID), req.params(MAP_ID), req.params(FLAVOR_ID));
+		return (req, res) -> srv.setLastServer(UUID.fromString(req.params(PLAYER_ID)), req.params(GAME_ID), req.body());
 	}
 }
