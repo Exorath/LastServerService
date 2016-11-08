@@ -25,7 +25,10 @@ Responsible for keeping track of the latest gameId (and optionally the mapId and
 **Arguments**:
 - uuid (string): The unique id of the player
 
-**Response**: {"gameId": "IW", "mapId": "greenForest", "flavorId": "solo"}
+**Response**: 
+```json
+{"gameId": "IW", "mapId": "greenForest", "flavorId": "solo"}
+```
 - gameId (string): The game identifier
 - mapId (string)[OPTIONAL]: The map identifier
 - flavorId (string)[OPTIONAL]: The flavor identifier
