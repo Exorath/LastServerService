@@ -34,14 +34,12 @@ public interface Service {
 	GetResult getLastServer(UUID playerId);
 
 	/**
-	 * @param playerId The id of the {@code Player} to which this treasure should be added.
-	 * @param gameId   The id of the last game the {@code Player} this {@code GetResult} object represents has played
-	 *                 on.
-	 * @param mapId    If available the id of the last map the {@code Player} this {@code GetResult} object represents
-	 *                 has played on.
-	 * @param flavorId If available the id of the last flavor the {@code Player} this {@code GetResult} object
-	 *                 represents has played.
+	 * @param playerId    The id of the {@code Player} to which this treasure should be added.
+	 * @param gameId      The id of the last game the {@code Player} this {@code GetResult} object represents has played
+	 *                    on.
+	 * @param requestBody If available the id of the last map and flavor the {@code Player} this {@code GetResult}
+	 *                    object represents has played on in json format.
 	 * @return A {@code PutResult} with information regarding the success of the operation.
 	 */
-	PutResult setLastServer(UUID playerId, String gameId, String mapId, String flavorId);
+	PutResult setLastServer(UUID playerId, String gameId, String requestBody);
 }

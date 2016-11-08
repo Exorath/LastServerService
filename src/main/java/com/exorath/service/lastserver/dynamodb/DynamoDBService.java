@@ -34,9 +34,14 @@ import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
 import com.exorath.service.lastserver.Service;
 import com.exorath.service.lastserver.res.GetResult;
 import com.exorath.service.lastserver.res.PutResult;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.UUID;
 
 public class DynamoDBService implements Service {
@@ -46,6 +51,9 @@ public class DynamoDBService implements Service {
 	private static final String MAPID_ATTR = "mapId";
 	private static final String FLAVORID_ATTR = "flavorId";
 	private static final Logger logger = LoggerFactory.getLogger(DynamoDBService.class);
+	private static final Gson Gson = new Gson();
+	private static final Type MapStringStringType = new TypeToken<Map<String, String>>() {
+	}.getType();
 
 	private Table table;
 
@@ -98,22 +106,30 @@ public class DynamoDBService implements Service {
 	}
 
 	@Override
-	public PutResult setLastServer(UUID playerId, String gameId, String mapId, String flavorId) {
+	public PutResult setLastServer(UUID playerId, String gameId, String requestBody) {
 		if (gameId == null) {
 			return new PutResult("gameId can't be null.");
 		}
+
+		Map<String, String> body;
+		try {
+			body = Gson.fromJson(requestBody, MapStringStringType);
+		} catch (JsonSyntaxException ex) {
+			return new PutResult(ex.getMessage());
+		}
+
 		UpdateItemSpec spec = new UpdateItemSpec()
 				.withPrimaryKey(PRIM_KEY, playerId.toString())
 				.withAttributeUpdate(
 						new AttributeUpdate(GAMEID_ATTR).put(gameId),
-						new AttributeUpdate(MAPID_ATTR).put(mapId),
-						new AttributeUpdate(FLAVORID_ATTR).put(flavorId));
+						new AttributeUpdate(MAPID_ATTR).put(body.get(MAPID_ATTR)),
+						new AttributeUpdate(FLAVORID_ATTR).put(body.get(FLAVORID_ATTR)));
 		try {
 			UpdateItemOutcome outcome = table.updateItem(spec);
-			logger.info("Successfully set last server data for player " + playerId + ": gameId(" + gameId + ") mapId(" + mapId + ") flavorId(" + flavorId + ")");
+			logger.info("Successfully set last server data for player " + playerId + ": gameId(" + gameId + ") mapId(" + body.get(MAPID_ATTR) + ") flavorId(" + body.get(FLAVORID_ATTR) + ")");
 			return new PutResult();
 		} catch (ConditionalCheckFailedException ex) {
-			logger.warn("Failed to set last server data for player" + playerId + ": gameId(" + gameId + ") mapId(" + mapId + ") flavorId(" + flavorId + ")\n:" + ex.getMessage());
+			logger.warn("Failed to set last server data for player" + playerId + ": gameId(" + gameId + ") mapId(" + body.get(MAPID_ATTR) + ") flavorId(" + body.get(FLAVORID_ATTR) + ")\n:" + ex.getMessage());
 			return new PutResult(ex.getMessage());
 		}
 	}

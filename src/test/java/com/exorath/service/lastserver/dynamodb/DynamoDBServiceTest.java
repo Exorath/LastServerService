@@ -42,10 +42,10 @@ public class DynamoDBServiceTest {
 
 		UUID playerId = UUID.randomUUID();
 		UUID playerId2 = UUID.randomUUID();
-		PutResult putResult = srv.setLastServer(playerId, null, NULL_STRING, NULL_STRING);
+		PutResult putResult = srv.setLastServer(playerId, null, "{ 'mapId': '" + NULL_STRING + "', 'flavorId': '" + NULL_STRING + "' }");
 		Assert.assertEquals(false, putResult.isSuccess());
 
-		PutResult putResult2 = srv.setLastServer(playerId2, GAME_ID_2, MAP_ID_2, FLAVOR_ID_2);
+		PutResult putResult2 = srv.setLastServer(playerId2, GAME_ID_2, "{ 'mapId': '" + MAP_ID_2 + "', 'flavorId': '" + FLAVOR_ID_2 + "' }");
 		Assert.assertEquals(true, putResult2.isSuccess());
 
 		GetResult getResult = srv.getLastServer(playerId);
