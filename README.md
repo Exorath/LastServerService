@@ -4,6 +4,10 @@ Responsible for keeping track of the latest gameId (and optionally the mapId and
 ##Endpoints
 ###/players/{uuid}/lastserver/{gameId} [PUT]:
 ####Sets the gameId (and optionally the mapId and flavorId if specified in the body as JSON) as the last game the player has played on, and returns whether or not the operation was a success
+**body**:
+```json
+{"mapId": "GreenForest", "flavorId": "solo"}
+```
 
 **Arguments**:
 - uuid (string): The unique id of the player
